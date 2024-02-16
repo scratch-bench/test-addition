@@ -1,4 +1,3 @@
-
 function oustide() {
   const x = 1;
 
