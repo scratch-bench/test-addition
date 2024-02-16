@@ -1,53 +1,62 @@
 /**
- * @description The `oustide` function returns a Promise that resolves to an object
- * created by the Factory pattern. The object has operations `BEGIN`, `ACQUIRE`, and
- * `DONE`. If any of these operations are called before `DONE`, it calls `console.error(e)`
- * with any given `e`. If all operations are successful (`DONE` is called) it extracts
- * the result returned from the promise.
+ * @description This is an anonymous self-invoking function that returns a Generator
+ * object which upon activation creates two functions.
+ * The first function takes any amount of data and applies a transformation to it as
+ * long as there is an ongoing operation. Once terminated either due to the user's
+ * preference (signaling SIGTERM) or at its logical end(which should only be
+ * Operation.DONE), a chain extraction method is run on all its results prior to
+ * chaining two initial operations Begin and Acquire to yield data transformed
+ * accordingly for further consumption.
+ * Please note this may contain more complex concepts under the hood depending on
+ * underlying classes _makedata() and _transform() but concisely what it does should
+ * answer your question.
  * 
- * @returns { object } The oustide() function generates an effect handler that performs
- * three actions: begins an acquire phase( Op.ACQUIRE), calls helper(data?) function;
- * if data is not provided and there is no makadata(); then it provides some default
- * makadatory to send it to the handler as input (in the place of any 'provided'
- * data); this operation goes until both signal terminator ( _sigterm()) has run its
- * course and operations done() return. Finally extraction ( .extract()); generates
- * a wrapped result which provides outer side effects  (ehandle);
+ * @returns { object } This anonymous self-invoking function declares a closure with
+ * two identifiers `x` and `helper`, creates a `Factory` object that produces an async
+ * iteratee chain which yields four operations `BEGIN`, `ACQUIRE`, `DONE`, and
+ * `_sigterm()`, with an id (`_makeid()`) for tracing purpose. This chain is curried
+ * with `helper`, then executed until either of the termination condition signals
+ * `_sigterm()` or operation done `Operation.DONE` happens.
+ * 
+ * Output: None/empty value.
  */
 function oustide() {
   const x = 1;
 
   /**
-   * @description This function takes input data (or any value), if it's not provided
-   * or not valid then it returns `_made_data()` (a function made data). Otherwise it
-   * runs `_transform()` on the input data.
+   * @description This function takes an input `data` and performs two operations on it:
    * 
-   * @param { any } data - Nothing. The code passes `data` unchanged as its return value.
+   * 1/ If the `data` is null or undefined; the function calls `_makedata()` to create
+   * a default ( dummy) data set.
+   * 2/ It then calls the `_transform()` method to transform the received `data`.
    * 
-   * @returns { any } The function `_transform` takes input data as a parameter and
-   * returns its transformed version. If the input data is null or missing (`data ??
-   * `_made data()`), instead of returning null or throwing an error as some function
-   * might do (especially one built around LINQ operations); this method returns the
-   * results from `_makeData()`. Therefore all the _transform does is apply transformation
-   * logic without caring about validity or null values. The return value is consistent;
-   * the `_madeData()` output serves as the fallback input. This way you have no partial
-   * application errors due to lack of a proper argument during runtime which could
-   * potentially throw an exception and avoid common pitfalls related to transforms
-   * when handling complex data transformations between collections.
+   * In essence the function is ensuring that the `data` is not `null/undefined` before
+   * passing it to the next operation( `._transform())`.
+   * 
+   * @param { object } data - The `data` parameter is an optional parameter and therefore
+   * it can be passed or omitted when calling this function. If provided ,it will be
+   * transformed using the `_transform()` method; if not provided (i.e., if it's null
+   * or missing) a `_makedata()` method will be called to create some default data and
+   * then returned
+   * 
+   * @returns { object } The function `f` takes an optional input `data`. If `data` is
+   * provided then it passes the original data to `_transform`.  Otherwise it returns
+   * the result of `_makedata`.
    */
   const helper = (data) => _transform(data ?? _makedata());
 
   return Factory.create(
               /**
-               * @description This anonymous function takes an argument e and calls the function console.error(e)
+               * @description This function takes an argument `e` and calls `console.error(e)`. It
+               * sends the argument to the console as an error message.
                * 
-               * @param { object } e - The `e` parameter is the error object that will be passed
-               * as an argument to the function when the promise is rejected. It provides information
-               * about the reason for the rejection and can be accessed and manipulated within the
-               * function as needed.
+               * @param { object } e - The `e` parameter is a shortcut for 'event' that takes an
+               * error object and calls the console.error function to display a detailed message
+               * if there are any exceptions
                * 
-               * @returns { any } The function simply writes the error object to the browser console
-               * using `console.error()`.  No explicit return value is given so the implicit return
-               * type of `void` is assumed and 'undefined' is returned.
+               * @returns {  } The function given above will print any errors that occur to the
+               * console using the `console.error()` method. Specifically it takes any error that
+               * occurs during the execution of the function and outputs it to the console.
                */
     { with: { ehandle: (e) => console.error(e) }, id: _makeid() }
   )
